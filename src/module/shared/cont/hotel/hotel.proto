@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package hotel;
+
+service HotelService {
+  rpc FindAll (Empty) returns (HotelList);
+  rpc FindOne (HotelId) returns (Hotel);
+  rpc CreateHotel (CreateHotelRequest) returns (Hotel);
+  rpc UpdateHotel (UpdateHotelRequest) returns (Hotel);
+  rpc DeleteHotel (HotelId) returns (DeleteResponse);
+}
+
+message Empty {}
+
+message HotelId {
+  string id = 1;
+}
+
+message Hotel {
+  string id = 1;
+  string name = 2;
+  string location = 3;
+  string state = 4;
+  string city = 5;
+  string userId = 6;
+}
+
+message HotelList {
+  repeated Hotel hotels = 1;
+}
+
+message CreateHotelRequest {
+  string name = 1;
+  string location = 2;
+  string state = 3;
+  string city = 4;
+  string userId = 5;
+}
+
+message UpdateHotelRequest {
+  string id = 1;
+  string name = 2;
+  string location = 3;
+  string state = 4;
+  string city = 5;
+  string userId = 6;
+}
+
+message DeleteResponse {
+  bool success = 1;
+}

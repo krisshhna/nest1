@@ -13,6 +13,12 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ShopServController } from './cont/shop-serv/shop-serv.controller.js';
 import { ShopServService } from './cont/shop-serv/shop-serv.service.js';
 import { ShopServ, shopServFactory } from './cont/shop-serv/shop-serv.schema.js';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+// const protoPath = join(__dirname, 'cont', 'hotel', 'hotel.proto');
 
 @Global()
 @Module({
@@ -27,18 +33,25 @@ import { ShopServ, shopServFactory } from './cont/shop-serv/shop-serv.schema.js'
       signOptions:{expiresIn:'1h'}
     }),
     ClientsModule.register([
-      {
-        name:'HOTEL_SERVICE',
-        transport:Transport.TCP,
+    {
+        name:'Hotel_CRUD',
+        transport:Transport.GRPC,
         options:{
-          host:'localhost',
-          port:8877
+          package:'hotel',
+          protoPath:join(__dirname, 'cont', 'hotel', 'hotel.proto'),
+          url:'localhost:6321',
+          loader: {
+            keepCase: false,
+            defaults: true,
+            arrays: true,
+            objects: true,
+          },
         }
       }
     ])
   ],
   controllers: [UserTypeController, LocationController, HotelController, ShopServController],
   providers: [LocationService, UserTypeService, HotelService, ShopServService],
-  exports:[LocationService, UserTypeService, JwtModule, ClientsModule]
+  exports:[LocationService, UserTypeService, JwtModule]
 })
 export class SharedModule {}

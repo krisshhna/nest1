@@ -1,29 +1,37 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { type ClientGrpc, ClientProxy } from '@nestjs/microservices';
+import {  Observable } from 'rxjs';
+
+interface HotelGrpcService {
+  FindAllRec(data: {}): Observable<any>;
+  FindOne(data: { id: string }): Observable<any>;
+  CreateHotel(data: any): Observable<any>;
+  UpdateHotel(data: any): Observable<any>;
+  DeleteHotel(data: { id: string }): Observable<any>;
+}
 
 @Injectable()
-export class HotelService {
-    constructor(@Inject('HOTEL_SERVICE') public hotel:ClientProxy){}
+export class HotelService implements OnModuleInit{
+    public hotelGrpc:HotelGrpcService;
+    constructor(@Inject('Hotel_CRUD') public client:ClientGrpc){}
 
-    async create(rec:any){
-        return await firstValueFrom(this.hotel.send('createHotel',rec)); 
+    onModuleInit() {
+        this.hotelGrpc = this.client.getService<HotelGrpcService>('HotelService');
     }
 
-    async findAll(page:number, query:any){
-        let rec = {page, query};
-        return await firstValueFrom(this.hotel.send('allHotel',rec)); 
+    async findAll(){
+        return await this.hotelGrpc.FindAllRec({});
     }
 
-    async findOne(id:string){
-        return await firstValueFrom(this.hotel.send('singleHotel',id)); 
+    findOne(){
     }
 
-    async updateOne(rec:any){
-        return await firstValueFrom(this.hotel.send('updateHotel',rec)); 
+    createHotel(){
     }
 
-    async deleteOne(id:string){
-        return await firstValueFrom(this.hotel.send('removeHotel',id)); 
+    updateHotel(){
+    }
+
+    deleteHotel(){
     }
 }
