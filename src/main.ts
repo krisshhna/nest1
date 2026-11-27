@@ -12,6 +12,7 @@ async function bootstrap() {
     origin:'http://localhost:4200',
     method:['GET','POST','PUT','PATCH','DELETE']
   })
+  console.log(`The port is running on ${process.env.PORT} port`);
   await app.listen(process.env.PORT ?? 3000);
 }
 await bootstrap();

@@ -13,6 +13,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ShopServController } from './cont/shop-serv/shop-serv.controller.js';
 import { ShopServService } from './cont/shop-serv/shop-serv.service.js';
 import { ShopServ, shopServFactory } from './cont/shop-serv/shop-serv.schema.js';
+import { Hotel, HotelSchema } from './cont/hotel/hotel.schema.js';
 
 @Global()
 @Module({
@@ -20,7 +21,8 @@ import { ShopServ, shopServFactory } from './cont/shop-serv/shop-serv.schema.js'
     MongooseModule.forFeature([
       {name:userType.name, schema:userTypeFactory},
       {name:Location.name, schema:locationFactory},
-      {name:ShopServ.name, schema:shopServFactory}
+      {name:ShopServ.name, schema:shopServFactory},
+      {name:Hotel.name,    schema:HotelSchema}
     ]),
     JwtModule.register({
       secret:`${process.env.JWTSECRET}`,
@@ -39,6 +41,6 @@ import { ShopServ, shopServFactory } from './cont/shop-serv/shop-serv.schema.js'
   ],
   controllers: [UserTypeController, LocationController, HotelController, ShopServController],
   providers: [LocationService, UserTypeService, HotelService, ShopServService],
-  exports:[LocationService, UserTypeService, JwtModule, ClientsModule]
+  exports:[LocationService, UserTypeService, HotelService, JwtModule, ClientsModule]
 })
 export class SharedModule {}

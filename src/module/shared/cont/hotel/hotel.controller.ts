@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import { HotelService } from './hotel.service.js';
+import { catchError } from 'rxjs';
 
 @Controller('hotel')
 export class HotelController {
@@ -9,45 +10,49 @@ export class HotelController {
     create(@Body() rec:any){
         return this.hotel.create(rec).then((data)=>({
             result:data,
+            message:'Record created successfull!'
         })).catch((err)=>({
-            message:`Error message ${err}`
-        }))
+            message:`ERROR MESSAGE: ${err}`
+        }));
     }
 
-    @Get(':page')
-    findAll(@Param('page') page:number, @Query() query:any){
-        return this.hotel.findAll(page, query).then((data)=>({
-            result:data.result,
-        })).catch((err)=>({
-            message:`Error message asd ${err}`
-        }))
-    }
-
-    @Get(':id')
-    findOne(@Param('id') id:string){
-        return this.hotel.findOne(id).then((data)=>({
+    @Get('/:page')
+    readRecord(@Param('page') page:number, @Query('search') search:string){
+        console.log(page, search);
+        return this.hotel.read(search, page).then((data)=>({
             result:data,
+            message:'All Records'
         })).catch((err)=>({
-            message:`Error message ${err}`
-        }))
+            message:`ERROR MESSAGE: ${err}`
+        }));
     }
 
-    @Post(':id')
-    updateOne(@Param('id') id:string, @Body() rec:any){
-        let record = {id, rec};
-        return this.hotel.updateOne(record).then((data)=>({
-            result:data,
+    @Get('/:id')
+    findOne(@Param('id') _id:string){
+        return this.hotel.singleOne({_id}).then((data)=>({
+            result:data
         })).catch((err)=>({
-            message:`Error message ${err}`
-        }))
+            message:`ERROR MESSAGE: ${err}`
+        }));
     }
 
-    @Delete(':id')
-    deleteOne(@Param('id') id:string){
-        return this.hotel.deleteOne(id).then((data)=>({
-            result:data,
+    @Post('/:id')
+    updateOne(@Param('id') _id:string, @Body() rec:any){
+        return this.hotel.updateOne({_id},rec).then((data)=>({
+            result:data, 
+            message:'Single record updated successfully!'
         })).catch((err)=>({
-            message:`Error message ${err}`
-        }))
+            message:`ERROR MESSAGE ${err}`
+        }));
+    }
+
+    @Delete('/:id')
+    deleteOne(@Param('id') _id:string){
+        return this.hotel.deleteOne({_id}).then((data)=>({
+            result:data,
+            message:'Deleted successfull!!'
+        })).catch((err)=>({
+            message:`ERROR MESSAGE: ${err}`
+        }));
     }
 }
